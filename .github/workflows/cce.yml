@@ -1,0 +1,30 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Compilar
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Reportar versiones de herramientas
+      run: |
+        gcc --version
+
+    - name: Compilar intro
+      run: |
+        ls
+        cd intro
+        archivos_c=$(find . -maxdepth 1 -type f -name "*.c")
+        for archivo in $archivos_c; do
+          ejecutable=$(basename "$archivo" .c)
+          gcc -o "$ejecutable" "$archivo"
+          if [ $? -eq 0 ]; then
+            echo "$archivo compila"
+          else
+            echo "$archivo no compila"
+            exit 1
+          fi
+        done
+
